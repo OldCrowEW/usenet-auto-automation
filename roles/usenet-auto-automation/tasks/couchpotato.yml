@@ -1,27 +1,42 @@
 ---
+
+- name: Create CouchPotato User
+  user: name=couchpotato shell=/bin/bash groups=usenet append=yes
+
 - name: Install git
   yum: name=git state=latest
 
 - name: Git Clone CouchPotato source from GitHub
-  - git: repo=https://github.com/RuudBurger/CouchPotatoServer.git
+  git: repo=https://github.com/RuudBurger/CouchPotatoServer.git
        dest=/opt/couchpotato
 
-- nme: Create CouchPotato User
-  user: name=couchpotato shell=/bin/bash groups=usenet append=yes
-
-- name: Change permissions on CouchPotato directory
-  file: path=/opt/couchpotato state=directory mode=0755 owner=couchpotato
+- name: Set permissions on CouchPotato directory
+  file: path=/opt/couchpotato state=directory owner=couchpotato group=usenet
 
 - name: Copy over CouchPotato systemd unit file
-  file: src=couchpotato.service dest=/etc/systemd/system/
-  notify:
-    - reload systemd
-    - restart couchpotato
+  copy: src=couchpotato.service dest=/etc/systemd/system/
+  #notify:
+  #  - reload systemd
+  #  - restart couchpotato
+
+- name: reload systemd
+  command: systemctl daemon-reload
 
 - name: Copy CouchPotato firewalld file in place
-  file: src=couchpotato.xml dest=/etc/firewalld/services/
+  copy: src=couchpotato.xml dest=/etc/firewalld/services/
+
+- name: reload firewalld
+  command: firewall-cmd --reload
 
 - name: Enable CouchPotato firewalld rules
-  firewalld: service=couchpotato permanent=true state=enabled
-    notify:
-    - reload firewalld
+  firewalld: service=couchpotato permanent=true state=enabled immediate=yes
+  #notify:
+  #  - reload firewalld
+
+#TODO: Put this where it belongs
+- name: Start and Enable CouchPotato
+  service: name=couchpotato enabled=yes
+
+#TODO: Remove when notifies work properly
+- name: restart CouchPotato
+  service: name=couchpotato state=restarted
