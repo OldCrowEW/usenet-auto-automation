@@ -1,29 +1,49 @@
 ---
-- nme: Create NZBget User
+- name: Create NZBget User
   user: name=nzbget shell=/bin/bash groups=usenet append=yes
 
-- name: Create folder for NZBget
-  file: path=/opt/nzbget state=directory mode=0755
+#- name: Create folder for NZBget
+#  file: path=/opt/nzbget state=directory mode=0755
 
 - name: Fetch NZBget Installer
-  get_url: url=https://github.com/nzbget/nzbget/releases/download/v15.0/nzbget-15.0-bin-linux.run dest=/opt/nzbget mode=0755
+  get_url: url=https://github.com/nzbget/nzbget/releases/download/v15.0/nzbget-15.0-bin-linux.run dest=/opt/ mode=0755
 
-  name: Copy over NZBget systemd unit file
-  file: src=nzbget.service dest=/etc/systemd/system/
-  notify:
-    - reload systemd
-    - restart nzbget
+- name: Run Installer
+  command: /opt/nzbget-15.0-bin-linux.run --destdir /opt/nzbget
+
+- name: Set NZBget directory Owner
+  file: path=/opt/nzbget owner=nzbget group=usenet state=directory recurse=yes
+
+- name: Clean Up Installer
+  file: path=/opt/nzbget-15.0-bin-linux.run state=absent
+
+- name: Copy over NZBget systemd unit file
+  copy: src=nzbget.service dest=/etc/systemd/system/nzbget.service
+#  notify:
+#    - reload systemd
+#    - restart nzbget
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: Copy NZBget firewalld file in place
+  copy: src=nzbget.xml dest=/etc/firewalld/services/
+#  notify:
+#    - reload firewalld
+
+- name: reload firewalld
+  command: firewall-cmd --reload
 
 - name: Enable NZBget firewalld rules
-  firewalld: service=nzbget permanent=true state=enabled
-    notify:
-    - reload firewalld
+  firewalld: service=nzbget permanent=true state=enabled immediate=yes
+
+#- name: Restart firewalld
+#  service: name=firewalld state=restarted
 
 #TODO: Put this where it belongs
 - name: Start and Enable NZBget
-  service: name=nzbget enabled=yes state=started
+  service: name=nzbget enabled=yes
 
-#TODO: Put this where it belongs
-- name: reload systemd
-  sudo: yes
-  command: systemctl daemon-reload
+#TODO: Remove when notifies work properly
+- name: restart nzbget
+  service: name=nzbget state=restarted

@@ -6,5 +6,5 @@
   group: name=usenet state=present
 
 - include: nzbget.yml
-- include: sonarr.yml
-- include: couchpotato.yml
+#- include: sonarr.yml
+#- include: couchpotato.yml
