@@ -1,0 +1,1 @@
+# usenet-auto-automation
