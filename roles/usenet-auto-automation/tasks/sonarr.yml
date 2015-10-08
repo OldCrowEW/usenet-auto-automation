@@ -36,3 +36,8 @@
   firewalld: service=sonarr permanent=true state=enabled
     notify:
     - reload firewalld
+
+#TODO: Put this where it belongs
+- name: reload systemd
+  sudo: yes
+  command: systemctl daemon-reload

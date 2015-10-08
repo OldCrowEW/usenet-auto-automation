@@ -11,3 +11,17 @@
 
 - name: Change permissions on CouchPotato directory
   file: path=/opt/couchpotato state=directory mode=0755 owner=couchpotato
+
+- name: Copy over CouchPotato systemd unit file
+  file: src=couchpotato.service dest=/etc/systemd/system/
+  notify:
+    - reload systemd
+    - restart couchpotato
+
+- name: Copy CouchPotato firewalld file in place
+  file: src=couchpotato.xml dest=/etc/firewalld/services/
+
+- name: Enable CouchPotato firewalld rules
+  firewalld: service=couchpotato permanent=true state=enabled
+    notify:
+    - reload firewalld
