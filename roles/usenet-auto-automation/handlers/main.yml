@@ -1,0 +1,15 @@
+---
+- name: restart systemd
+  service: name=systemd state=restarted
+
+- name: restart firewalld
+  service: name=firewalld state=restarted
+
+- name: restart nzbget
+  service: name=nzbget state=restarted
+
+- name: restart sonarr
+  service: name=sonarr state=restarted
+
+- name: restart couchpotato
+  service: name=couchpotato state=restarted
