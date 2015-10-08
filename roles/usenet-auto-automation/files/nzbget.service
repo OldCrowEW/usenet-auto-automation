@@ -1,0 +1,16 @@
+[Unit]
+Description=NZBGet
+# This will load nzbget only after setting up the network
+After=network.target
+[Service]
+User=nzbget
+Group=fileshare
+Type=forking
+ExecStart=/usr/local/bin/nzbget -c /usr/local/etc/nzbget.conf -D
+ExecStop=/usr/local/bin/nzbget -Q
+ExecReload=/usr/local/bin/nzbget -O
+KillMode=process
+Restart=on-failure
+[Install]
+# Needed to run nzbget at boot
+WantedBy=multi-user.target

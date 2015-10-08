@@ -1,0 +1,38 @@
+---
+- name: Install prerequisites for Sonarr
+  yum: name={{ with_items }}
+  with_items:
+    -mediainfo 
+    - libzen 
+    - libmediainfo
+    - curl 
+    - gettext 
+    #- mono-opt 
+    #- mono-opt-devel 
+    - sqlite.x86_64 
+
+- name: Install Mono
+  yum: name={{ with_items }}
+  with_items:
+    - mono-opt-3.4 
+    - mono-opt-3.4-devel
+
+- name: Create Mono symlink
+  file: src=/opt/mono/bin/mono dest=/usr/bin/mono state=link
+
+- name: Download and extract Sonarr
+  unarchive: src=http://update.sonarr.tv/v2/master/mono/NzbDrone.master.tar.gz dest=/opt/nzbdrone
+
+- name: Copy over Sonarr systemd unit file
+  file: src=sonarr.service dest=/etc/systemd/system/
+  notify:
+    - reload systemd
+    - restart sonarr
+
+- name: Copy Sonarr firewalld file in place
+  file: src=sonarr.xml dest=/etc/firewalld/services/
+
+- name: Enable Sonarr firewalld rules
+  firewalld: service=sonarr permanent=true state=enabled
+    notify:
+    - reload firewalld

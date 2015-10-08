@@ -1,0 +1,4 @@
+--- 
+- hosts: usenet
+  roles:
+    - usenet-auto-automation

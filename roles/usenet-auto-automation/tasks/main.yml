@@ -1,0 +1,10 @@
+---
+- name: Install epel repo
+  yum: name=epel-release state=latest
+
+- name: Create group for our Usenet Accounts
+  group: name=usenet state=present
+
+- include: nzbget.yml
+- include: sonarr.yml
+- include: couchpotato.yml
