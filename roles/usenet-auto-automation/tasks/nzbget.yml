@@ -1,4 +1,10 @@
 ---
+- name: Install Packages
+  yum: name={{ item }}
+  with_items:
+    - p7zip
+    - par2cmdline
+
 - name: Create NZBget User
   user: name=nzbget shell=/bin/bash groups=usenet append=yes
 
