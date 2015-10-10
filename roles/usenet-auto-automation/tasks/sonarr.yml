@@ -17,12 +17,6 @@
     - mono-opt
     - sqlite.x86_64 
 
-#- name: Install Mono
-#  yum: name={{ with_items }}
-#  with_items:
-#    - mono-opt-3.4 
-#    - mono-opt-3.4-devel
-
 - name: Create Mono symlink
   file: src=/opt/mono/bin/mono dest=/usr/bin/mono state=link
 
