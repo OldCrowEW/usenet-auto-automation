@@ -1,0 +1,59 @@
+---
+
+- name: Create headphones User
+  user: name=headphones shell=/bin/bash groups=usenet append=yes
+
+- name: Install git
+  yum: name=git state=latest
+
+- name: Git Clone headphones source from GitHub
+  git: repo=https://github.com/rembo10/headphones.git
+       dest=/opt/headphones
+
+- name: Add empty config file
+  file: dest=/opt/headphones/headphones.ini state=touch
+
+- name: Set permissions on headphones directory
+  file: path=/opt/headphones state=directory owner=headphones group=usenet recurse=yes
+
+- name: Copy over headphones systemd unit file
+  copy: src=headphones.service dest=/etc/systemd/system/
+  #notify:
+  #  - reload systemd
+  #  - restart headphones
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: Copy headphones firewalld file in place
+  copy: src=headphones.xml dest=/etc/firewalld/services/
+
+- name: reload firewalld
+  command: firewall-cmd --reload
+
+- name: Enable headphones firewalld rules
+  firewalld: service=headphones permanent=true state=enabled immediate=yes
+  #notify:
+#  - reload firewalld
+
+#TODO: Put this where it belongs
+- name: Start and Enable headphones
+  service: name=headphones enabled=yes
+
+#TODO: Modify correct file for default config
+- name: Change headphones to listen on 0.0.0.0 instead of localhost
+  lineinfile: dest=/opt/headphones/headphones/config.py
+              regexp=^"    'HTTP_HOST'"
+              line="    'HTTP_HOST'":" (str, 'General', '0.0.0.0'),"
+
+#TODO: Remove when notifies work properly
+- name: restart headphones
+  service: name=headphones state=started
+
+#TODO: Remove this hack to get correct config.
+- name: Remove default config so new one is created
+  file: path=/opt/headphones/headphones.ini state=absent
+
+#TODO: Remove when notifies work properly
+- name: restart headphones
+  service: name=headphones state=restarted

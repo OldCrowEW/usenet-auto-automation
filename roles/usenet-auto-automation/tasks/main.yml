@@ -8,3 +8,4 @@
 - include: nzbget.yml
 - include: sonarr.yml
 - include: couchpotato.yml
+- include: headphones.yml
