@@ -7,7 +7,7 @@ User=sonarr
 Group=usenet
 
 Type=simple
-ExecStart=/opt/mono/bin/mono /opt/NzbDrone/NzbDrone.exe -nobrowser -data /opt/NzbDrone
+ExecStart=/usr/bin/mono /opt/NzbDrone/NzbDrone.exe -nobrowser -data /opt/NzbDrone
 TimeoutStopSec=20
 
 [Install]
