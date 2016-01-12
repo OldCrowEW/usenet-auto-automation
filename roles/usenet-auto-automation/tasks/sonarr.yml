@@ -3,8 +3,14 @@
 - name: Create Sonarr User
   user: name=sonarr shell=/bin/bash groups=usenet append=yes
 
-- name: Put OpenSuse CentOS7 Mono Repo in place
-  get_url: url=http://download.opensuse.org/repositories/home:/tpokorra:/mono/CentOS_CentOS-7/home:tpokorra:mono.repo dest=/etc/yum.repos.d/mono.repo
+- name: Add ubuntu keyserver.ubuntu.com for mono
+  rpm_key: state=present key=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+
+- name: Add Mono repo
+  yumrepo:
+    name: mono-project
+    description: mono YUM repo
+    baseurl: http://download.mono-project.com/repo/centos/
 
 - name: Install prerequisites for Sonarr
   yum: name={{ item }}
@@ -14,11 +20,8 @@
     - libmediainfo
     - curl 
     - gettext 
-    - mono-opt
-    - sqlite.x86_64 
-
-- name: Create Mono symlink
-  file: src=/opt/mono/bin/mono dest=/usr/bin/mono state=link
+    - mono-complete
+    - sqlite.x86_64
 
 - name: Wget NzbDrone.master.tar.gz
   get_url: url=http://update.sonarr.tv/v2/master/mono/NzbDrone.master.tar.gz dest=/tmp/
