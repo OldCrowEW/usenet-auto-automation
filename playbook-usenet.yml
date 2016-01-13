@@ -1,4 +1,5 @@
 --- 
 - hosts: usenet
+  sudo: yes
   roles:
     - usenet-auto-automation
