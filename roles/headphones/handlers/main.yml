@@ -1,0 +1,15 @@
+---
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart systemd
+  service: name=systemd state=restarted
+
+- name: reload firewalld
+  command: firewall-cmd --reload
+
+- name: restart firewalld
+  service: name=firewalld state=restarted
+
+- name: restart headphones
+  service: name=headphones state=restarted
