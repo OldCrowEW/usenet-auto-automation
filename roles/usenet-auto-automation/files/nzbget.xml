@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<service>
-  <short>nzbget</short>
-  <description>NZBget Download Service</description>
-  <port protocol="tcp" port="6789"/>
-</service>
