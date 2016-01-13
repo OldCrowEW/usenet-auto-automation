@@ -19,3 +19,6 @@
 
 - name: restart couchpotato
   service: name=couchpotato state=restarted
+
+- name: restart headphones
+  service: name=headphones state=restarted
