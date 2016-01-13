@@ -28,11 +28,12 @@
 - name: Add headphones firewalld entry
   firewalld: port=8181/tcp permanent=true state=enabled immediate=yes
 
+##Broken after upgrading to Ansible 2.0. 
 #TODO: Modify correct file for default config
-- name: Change headphones to listen on 0.0.0.0 instead of localhost
-  lineinfile: dest=/opt/headphones/headphones/config.py
-              regexp=^"    'HTTP_HOST'"
-              line="    'HTTP_HOST'":" (str, 'General', '0.0.0.0'),"
+#- name: Change headphones to listen on 0.0.0.0 instead of localhost
+#  lineinfile: dest=/opt/headphones/headphones/config.py
+#              regexp=^"    'HTTP_HOST'"
+#              line="    'HTTP_HOST'":" (str, 'General', '0.0.0.0'),"
 
 #TODO: Remove this hack to get correct config.
 - name: Remove default config so new one is created
