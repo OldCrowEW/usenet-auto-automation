@@ -8,3 +8,8 @@
   sudo: yes
   roles:
     - usenet-auto-automation
+
+- hosts: usenet
+  sudo: yes
+  roles:
+    - couchpotato
