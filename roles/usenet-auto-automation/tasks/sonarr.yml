@@ -23,7 +23,7 @@
     - mono-complete
     - sqlite.x86_64
 
-- name: Wget NzbDrone.master.tar.gz
+- name: wget NzbDrone.master.tar.gz
   get_url: url=http://update.sonarr.tv/v2/master/mono/NzbDrone.master.tar.gz dest=/tmp/
 
 - name: Extract Sonarr
@@ -31,28 +31,12 @@
 
 - name: Copy over Sonarr systemd unit file
   copy: src=sonarr.service dest=/etc/systemd/system/sonarr.service
-#  notify:
-#    - reload systemd
-#    - restart sonarr
+  notify:
+    - reload systemd
+    - restart sonarr
 
-- name: reload systemd
-  command: systemctl daemon-reload
-
-- name: Copy Sonarr firewalld file in place
-  copy: src=sonarr.xml dest=/etc/firewalld/services/
-
-- name: reload firewalld
-  command: firewall-cmd --reload
-
-- name: Enable Sonarr firewalld rules
-  firewalld: service=sonarr permanent=true state=enabled immediate=yes
-#  notify:
-#    - reload firewalld
-
-#TODO: Put this where it belongs
-- name: Start and Enable Sonarr
+- name: Enable Sonarr service
   service: name=sonarr enabled=yes
 
-#TODO: Remove when notifies work properly
-- name: restart Sonarr
-  service: name=sonarr state=restarted
+- name: Add Sonarr firewalld entry
+  firewalld: port=8989/tcp permanent=true state=enabled immediate=yes

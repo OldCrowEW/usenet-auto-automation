@@ -15,28 +15,12 @@
 
 - name: Copy over CouchPotato systemd unit file
   copy: src=couchpotato.service dest=/etc/systemd/system/
-  #notify:
-  #  - reload systemd
-  #  - restart couchpotato
+  notify:
+    - reload systemd
+    - restart couchpotato
 
-- name: reload systemd
-  command: systemctl daemon-reload
-
-- name: Copy CouchPotato firewalld file in place
-  copy: src=couchpotato.xml dest=/etc/firewalld/services/
-
-- name: reload firewalld
-  command: firewall-cmd --reload
-
-- name: Enable CouchPotato firewalld rules
-  firewalld: service=couchpotato permanent=true state=enabled immediate=yes
-  #notify:
-  #  - reload firewalld
-
-#TODO: Put this where it belongs
 - name: Start and Enable CouchPotato
   service: name=couchpotato enabled=yes
 
-#TODO: Remove when notifies work properly
-- name: restart CouchPotato
-  service: name=couchpotato state=restarted
+- name: Add CouchPotato firewalld entry
+  firewalld: port=5050/tcp permanent=true state=enabled immediate=yes
