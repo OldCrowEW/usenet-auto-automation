@@ -7,24 +7,27 @@
 - hosts: usenet
   sudo: yes
   roles:
-    - usenet-auto-automation
-
-- hosts: usenet
-  sudo: yes
-  roles:
+    - nzbget
+  tags:
     - nzbget
 
 - hosts: usenet
   sudo: yes
   roles:
     - sonarr
+  tags:
+    - sonarr
 
 - hosts: usenet
   sudo: yes
   roles:
     - couchpotato
+  tags:
+    - couchpotato
 
 - hosts: usenet
   sudo: yes
   roles:
+    - headphones
+  tags:
     - headphones
