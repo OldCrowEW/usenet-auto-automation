@@ -13,3 +13,8 @@
   sudo: yes
   roles:
     - couchpotato
+
+- hosts: usenet
+  sudo: yes
+  roles:
+    - headphones
