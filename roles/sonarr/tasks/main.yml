@@ -29,6 +29,9 @@
 - name: Extract Sonarr
   unarchive: src=/tmp/NzbDrone.master.tar.gz dest=/opt/ owner=sonarr group=usenet copy=no
 
+- name: Set correct permissions on sonarr directory
+  file: path=/opt/NzbDrone owner=sonarr group=usenet recurse=yes
+
 - name: Copy over Sonarr systemd unit file
   copy: src=sonarr.service dest=/etc/systemd/system/sonarr.service
   notify:
