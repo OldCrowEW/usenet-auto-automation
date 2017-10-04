@@ -3,11 +3,11 @@ Description=Sonarr Daemon
 After=syslog.target network.target
 
 [Service]
-User=sonarr
-Group=usenet
+User={{ sonarr_user }}
+Group={{ sonarr_group }}
 
 Type=simple
-ExecStart=/usr/bin/mono /opt/NzbDrone/NzbDrone.exe -nobrowser -data /opt/NzbDrone
+ExecStart=/usr/bin/mono {{ sonarr_dir }}/{{ sonarr_bin }} -nobrowser -data {{ sonarr_data_dir }}
 TimeoutStopSec=20
 
 [Install]
