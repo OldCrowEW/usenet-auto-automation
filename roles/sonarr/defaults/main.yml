@@ -1,0 +1,32 @@
+sonarr_user: sonarr
+sonarr_group: usenet
+
+sonarr_base_dir: "/opt"
+sonarr_dir: "{{ sonarr_base_dir }}/sonarr"
+sonarr_data_dir: "{{ sonarr_dir }}"
+
+sonarr_bin: NzbDrone.exe
+
+sonarr_prereq:
+  - curl
+  - gcc
+  - gettext
+  - git
+  - libmediainfo
+  - libxslt-devel
+  - libzen
+  - mediainfo
+  - mono-core
+  - mono-devel
+  - p7zip
+  - par2cmdline
+  - python-cheetah
+  - python-configobj
+  - python-dbus
+  - python-devel
+  - python-feedparser
+  - sqlite.x86_64 
+  - tar 
+#  - unrar 
+  - unzip
+  - wget

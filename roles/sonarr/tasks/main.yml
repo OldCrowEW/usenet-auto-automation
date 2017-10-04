@@ -1,10 +1,8 @@
 ---
-
-- name: Create Sonarr User
-  user: name=sonarr shell=/bin/bash groups=usenet append=yes
-
 - name: Add ubuntu keyserver.ubuntu.com for mono
-  rpm_key: state=present key=http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+  rpm_key:
+    state: present
+    key: http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 
 - name: Add Mono repo
   yum_repository:
@@ -12,34 +10,60 @@
     description: mono YUM repo
     baseurl: http://download.mono-project.com/repo/centos/
 
+- name: Install yum-utils
+  yum:
+    name: yum-utils
+    state: present
+
 - name: Install prerequisites for Sonarr
-  yum: name={{ item }}
+  yum:
+    name: "{{ item }}"
+    state: present
   with_items:
-    - mediainfo 
-    - libzen 
-    - libmediainfo
-    - curl 
-    - gettext 
-    - mono-complete
-    - sqlite.x86_64
+    "{{ sonarr_prereq }}"
 
-- name: wget NzbDrone.master.tar.gz
-  get_url: url=http://update.sonarr.tv/v2/master/mono/NzbDrone.master.tar.gz dest=/tmp/
+- name: Create Sonarr User
+  user:
+    name: "{{ sonarr_user }}"
+    shell: /sbin/nologin
+    groups: "{{ sonarr_group }}"
 
-- name: Extract Sonarr
-  unarchive: src=/tmp/NzbDrone.master.tar.gz dest=/opt/ owner=sonarr group=usenet copy=no
+- name: Create Sonarr directory "{{ sonarr_dir }}"
+  file:
+    path: "{{ sonarr_dir }}"
+    state: directory
+    owner: "{{ sonarr_user }}"
+    group: "{{ sonarr_group }}"
 
-- name: Set correct permissions on sonarr directory
-  file: path=/opt/NzbDrone owner=sonarr group=usenet recurse=yes
+- name: Fetch Sonarr and Extract to /opt/sonarr
+  unarchive:
+    src: http://update.sonarr.tv/v2/master/mono/NzbDrone.master.tar.gz
+    dest: "{{ sonarr_dir }}"
+    extra_opts: ['--strip-components=1']
+    remote_src: yes
+    creates: "{{ sonarr_dir }}/{{ sonarr_bin }}"
+    owner: "{{ sonarr_user }}"
+    group: "{{ sonarr_group }}"
 
-- name: Copy over Sonarr systemd unit file
-  copy: src=sonarr.service dest=/etc/systemd/system/sonarr.service
+- name: Copy over Sonarr systemd unit file template
+  template:
+    src: sonarr.service.j2
+    dest: /etc/systemd/system/sonarr.service
   notify:
     - reload systemd
     - restart sonarr
 
-- name: Enable Sonarr service
-  service: name=sonarr enabled=yes
+- meta: flush_handlers
+
+- name: Ensure Sonarr is running and enabled
+  service:
+    name: sonarr
+    state: started
+    enabled: yes
 
 - name: Add Sonarr firewalld entry
-  firewalld: port=8989/tcp permanent=true state=enabled immediate=yes
+  firewalld:
+    port: 8989/tcp
+    permanent: true
+    state: enabled
+    immediate: yes
